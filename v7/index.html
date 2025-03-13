@@ -9,45 +9,186 @@
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
   
+  <!-- Google Fonts สำหรับภาษาไทย -->
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Sarabun', sans-serif;
       margin: 20px;
+      background-color: #f5f8fa;
     }
+    
     .hidden {
       display: none;
     }
+    
     .container {
       max-width: 800px;
       margin: 0 auto;
-      background: #f9f9f9;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      background: #ffffff;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.08);
     }
+    
+    h2 {
+      color: #2c3e50;
+      margin-bottom: 30px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid #eaecef;
+    }
+    
     .form-group {
-      margin-bottom: 15px;
+      margin-bottom: 20px;
     }
+    
+    .form-control, .btn {
+      border-radius: 8px;
+    }
+    
+    .form-control:focus {
+      box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+    }
+    
+    label {
+      font-weight: 500;
+      margin-bottom: 8px;
+      color: #2c3e50;
+    }
+    
     .employee-info {
       background-color: #e9f7fe;
-      padding: 15px;
-      border-radius: 5px;
-      margin-bottom: 15px;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      border-left: 4px solid #0d6efd;
+      transition: all 0.3s ease;
     }
+    
     .date-item {
-      background-color: #f5f5f5;
-      padding: 15px;
-      border-radius: 5px;
-      margin-bottom: 10px;
+      background-color: #f8f9fa;
+      padding: 18px;
+      border-radius: 10px;
+      margin-bottom: 15px;
       border-left: 4px solid #6c757d;
+      transition: all 0.3s ease;
     }
+    
     .weekday {
       font-weight: bold;
       color: #0d6efd;
     }
+    
     .weekend {
       font-weight: bold;
       color: #dc3545;
+    }
+    
+    .btn {
+      font-weight: 500;
+      padding: 8px 16px;
+      transition: all 0.2s;
+    }
+    
+    .btn-primary {
+      background-color: #0d6efd;
+      border-color: #0d6efd;
+    }
+    
+    .btn-primary:hover {
+      background-color: #0b5ed7;
+      border-color: #0a58ca;
+    }
+    
+    .btn-success {
+      background-color: #198754;
+      border-color: #198754;
+    }
+    
+    .btn-success:hover {
+      background-color: #157347;
+      border-color: #146c43;
+    }
+    
+    .alert {
+      border-radius: 10px;
+      padding: 15px;
+      margin-top: 20px;
+    }
+    
+    /* รูปแบบสำหรับตัวเลือกที่เลือก */
+    .selected-option {
+      background-color: #e7f5ff;
+      border-left: 4px solid #0d6efd;
+      font-weight: 600;
+      transform: translateX(5px);
+    }
+    
+    /* สีสำหรับสถานะวันทำงาน */
+    .workday-selected {
+      color: #198754;
+      font-weight: 600;
+    }
+    
+    .holiday-selected {
+      color: #dc3545;
+      font-weight: 600;
+    }
+    
+    /* ทำให้ responsive มากขึ้น */
+    @media (max-width: 768px) {
+      .container {
+        padding: 15px;
+      }
+      
+      h2 {
+        font-size: 1.5rem;
+      }
+      
+      .date-item {
+        padding: 12px;
+      }
+      
+      .form-check-inline {
+        display: block;
+        margin-bottom: 8px;
+      }
+    }
+    
+    @media (max-width: 576px) {
+      body {
+        margin: 10px;
+      }
+      
+      .container {
+        padding: 12px;
+      }
+      
+      h2 {
+        font-size: 1.3rem;
+        margin-bottom: 20px;
+      }
+    }
+    
+    /* สำหรับรูปแบบการทำงานที่เลือก */
+    .work-pattern-container {
+      margin-top: 10px;
+    }
+    
+    .work-pattern-option {
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #dee2e6;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .work-pattern-selected {
+      background-color: #e7f5ff;
+      border-color: #0d6efd;
+      box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
     }
   </style>
 </head>
@@ -61,7 +202,7 @@
       <div class="form-group">
         <label for="employeeId">1. รหัสพนักงาน:</label>
         <input type="text" class="form-control" id="employeeId" required>
-        <button type="button" class="btn btn-primary mt-2" id="searchButton" onclick="searchEmployee()">ค้นหาข้อมูลพนักงาน</button>
+        <button type="button" class="btn btn-primary mt-2 w-100" id="searchButton" onclick="searchEmployee()">ค้นหาข้อมูลพนักงาน</button>
       </div>
       
       <!-- ข้อมูลพนักงานที่ดึงมา -->
@@ -88,13 +229,21 @@
       <!-- ข้อ 3: รูปแบบวันทำงาน -->
       <div class="form-group hidden" id="workPatternSection">
         <label>3. รูปแบบวันทำงานแต่ละสัปดาห์: <span class="text-danger">*</span></label>
-        <div class="form-check">
-          <input class="form-check-input" type="radio" name="workPattern" id="samePattern" value="same" required>
-          <label class="form-check-label" for="samePattern">วันทำงานเหมือนกันทุกสัปดาห์</label>
-        </div>
-        <div class="form-check">
-          <input class="form-check-input" type="radio" name="workPattern" id="alternatePattern" value="alternate">
-          <label class="form-check-label" for="alternatePattern">มีการสลับวันทำงานทุกสัปดาห์ (5.5 วัน)</label>
+        
+        <div class="work-pattern-container">
+          <div class="work-pattern-option" onclick="selectWorkPattern('samePattern')">
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="workPattern" id="samePattern" value="same" required>
+              <label class="form-check-label" for="samePattern">วันทำงานเหมือนกันทุกสัปดาห์</label>
+            </div>
+          </div>
+          
+          <div class="work-pattern-option" onclick="selectWorkPattern('alternatePattern')">
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="workPattern" id="alternatePattern" value="alternate">
+              <label class="form-check-label" for="alternatePattern">มีการสลับวันทำงานทุกสัปดาห์ (5.5 วัน)</label>
+            </div>
+          </div>
         </div>
       </div>
       
@@ -102,18 +251,18 @@
       <div class="form-group hidden" id="dateSection">
         <label>4. ระยะเวลาทำงาน:</label>
         <div class="row">
-          <div class="col-md-6">
+          <div class="col-md-6 mb-2">
             <label for="startDate">วันที่เริ่มต้น: <span class="text-danger">*</span></label>
             <input type="date" class="form-control" id="startDate" required>
           </div>
-          <div class="col-md-6">
+          <div class="col-md-6 mb-2">
             <label for="endDate">วันที่สิ้นสุด: <span class="text-danger">*</span></label>
             <input type="date" class="form-control" id="endDate" required>
           </div>
         </div>
         <small class="text-muted">หมายเหตุ: ระบบจะแสดงรายการวันสำหรับกำหนดสถานะตามรูปแบบวันทำงานที่เลือก</small>
         <div class="mt-3">
-          <button type="button" class="btn btn-info" onclick="generateDatesList()">ตกลง</button>
+          <button type="button" class="btn btn-info w-100" onclick="generateDatesList()">ตกลง</button>
         </div>
       </div>
       
@@ -162,6 +311,9 @@
             document.getElementById('workPatternSection').classList.remove('hidden');
             document.getElementById('dateSection').classList.remove('hidden');
             hideStatus();
+            
+            // ให้ scroll ไปที่ส่วนข้อมูลพนักงาน
+            document.getElementById('employeeInfoSection').scrollIntoView({ behavior: 'smooth' });
           } else {
             showError('ไม่พบข้อมูลพนักงาน กรุณาตรวจสอบรหัสพนักงาน');
           }
@@ -170,6 +322,40 @@
           showError('เกิดข้อผิดพลาด: ' + error);
         })
         .getEmployeeData(employeeId);
+    }
+    
+    // ฟังก์ชันเลือกรูปแบบวันทำงาน
+    function selectWorkPattern(patternId) {
+      // ล้างการเลือกทั้งหมด
+      document.querySelectorAll('.work-pattern-option').forEach(function(option) {
+        option.classList.remove('work-pattern-selected');
+      });
+      
+      // เลือก radio button
+      document.getElementById(patternId).checked = true;
+      
+      // highlight ตัวเลือกที่เลือก
+      document.getElementById(patternId).closest('.work-pattern-option').classList.add('work-pattern-selected');
+    }
+    
+    // ฟังก์ชันเลือกสถานะวัน
+    function selectDayStatus(dateKey, status) {
+      const workdayRadio = document.getElementById(`workday_${dateKey}`);
+      const holidayRadio = document.getElementById(`holiday_${dateKey}`);
+      const workdayLabel = document.getElementById(`workday_label_${dateKey}`);
+      const holidayLabel = document.getElementById(`holiday_label_${dateKey}`);
+      
+      // รีเซ็ตสถานะทั้งหมด
+      workdayLabel.classList.remove('workday-selected');
+      holidayLabel.classList.remove('holiday-selected');
+      
+      if (status === 'work') {
+        workdayRadio.checked = true;
+        workdayLabel.classList.add('workday-selected');
+      } else {
+        holidayRadio.checked = true;
+        holidayLabel.classList.add('holiday-selected');
+      }
     }
     
     // ฟังก์ชันสร้างรายการวัน
@@ -245,15 +431,15 @@
               </p>
             </div>
             <div class="col-md-6">
-              <div class="form-check form-check-inline">
+              <div class="form-check form-check-inline" onclick="selectDayStatus('${dateKey}', 'work')">
                 <input class="form-check-input day-status-radio" type="radio" name="dayStatus_${dateKey}" 
                   id="workday_${dateKey}" value="1" required>
-                <label class="form-check-label" for="workday_${dateKey}">วันทำงาน</label>
+                <label class="form-check-label" for="workday_${dateKey}" id="workday_label_${dateKey}">วันทำงาน</label>
               </div>
-              <div class="form-check form-check-inline">
+              <div class="form-check form-check-inline" onclick="selectDayStatus('${dateKey}', 'holiday')">
                 <input class="form-check-input day-status-radio" type="radio" name="dayStatus_${dateKey}" 
                   id="holiday_${dateKey}" value="0" required>
-                <label class="form-check-label" for="holiday_${dateKey}">วันหยุด</label>
+                <label class="form-check-label" for="holiday_${dateKey}" id="holiday_label_${dateKey}">วันหยุด</label>
               </div>
             </div>
           </div>
@@ -279,6 +465,7 @@
       
       // แสดงส่วนรายละเอียดวัน
       document.getElementById('datesDetailSection').classList.remove('hidden');
+      document.getElementById('datesDetailSection').scrollIntoView({ behavior: 'smooth' });
       hideStatus();
     }
     
@@ -346,15 +533,18 @@
         .withSuccessHandler(function(result) {
           if (result.success) {
             showSuccess(result.message);
+            document.getElementById('successMessage').scrollIntoView({ behavior: 'smooth' });
             
             // รีเซ็ตฟอร์มหลังจากส่งข้อมูลสำเร็จ
             setTimeout(resetForm, 3000);
           } else {
             showError(result.message);
+            document.getElementById('errorMessage').scrollIntoView({ behavior: 'smooth' });
           }
         })
         .withFailureHandler(function(error) {
           showError('เกิดข้อผิดพลาด: ' + error);
+          document.getElementById('errorMessage').scrollIntoView({ behavior: 'smooth' });
         })
         .saveWorkTimeData(formData);
     }
@@ -400,7 +590,7 @@
       return nextNextMonday; // weeknum ต้องเป็นเลขคู่แน่นอน เพราะห่างกัน 1 สัปดาห์
     }
     
-    // ฟังก์ชันคำนวณเลข weeknum ในปี (ISO-8601)
+// ฟังก์ชันคำนวณเลข weeknum ในปี (ISO-8601)
     function getWeekNumber(date) {
       const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
       const dayNum = d.getUTCDay() || 7;
@@ -441,9 +631,17 @@
       document.getElementById('errorMessage').classList.add('hidden');
       document.getElementById('status').classList.add('hidden');
       
+      // รีเซ็ต work pattern selection
+      document.querySelectorAll('.work-pattern-option').forEach(function(option) {
+        option.classList.remove('work-pattern-selected');
+      });
+      
       document.getElementById('datesContainer').innerHTML = '';
       employeeData = null;
       datesList = [];
+      
+      // เลื่อนกลับไปด้านบนของฟอร์ม
+      window.scrollTo(0, 0);
     }
     
     // ฟังก์ชันแสดงข้อความสำเร็จ
@@ -477,6 +675,16 @@
     function hideStatus() {
       document.getElementById('status').classList.add('hidden');
     }
+    
+    // Event listeners สำหรับ select
+    document.getElementById('worktime').addEventListener('change', function() {
+      const selectedOption = this.options[this.selectedIndex];
+      if (selectedOption.value) {
+        this.classList.add('selected-option');
+      } else {
+        this.classList.remove('selected-option');
+      }
+    });
     
     // โหลดตัวเลือกช่วงเวลาทำงานเมื่อหน้าเว็บโหลดเสร็จ
     google.script.run
