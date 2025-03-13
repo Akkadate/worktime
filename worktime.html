@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แบบฟอร์มสำรวจเวลาทำงานของพนักงาน</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+        .container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            max-width: 800px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .hidden {
+            display: none;
+        }
+        .employee-info {
+            background-color: #f0f8ff;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>แบบฟอร์มสำรวจเวลาทำงานของพนักงาน</h2>
+        </div>
+        // ฟังก์ชันดึงข้อมูลพนักงานจาก Google Sheet
+        function fetchEmployeeData(employeeId) {
+            // แสดงข้อความรอการโหลด
+            $('#employeeName').text('กำลังค้นหาข้อมูล...');
+            $('#employeeDepartment').text('กำลังค้นหาข้อมูล...');
+            $('#employeeInfoSection').removeClass('hidden');
+            
+            // เรียกใช้ฟังก์ชัน getEmployeeData จาก Google Apps Script
+            google.script.run
+                .withSuccessHandler(function(result) {
+                    if (result) {
+                        employeeData = result;
+                        
+                        // แสดงข้อมูลพนักงาน
+                        $('#employeeName').text(employeeData.name);
+                        $('#employeeDepartment').text(employeeData.department);
+                        
+                        // เปิดฟอร์มส่วนต่อไป
+                        $('#worktimeSection').removeClass('hidden');
+                        $('#dateSection').removeClass('hidden');
+                        $('#dayTypeSection').removeClass('hidden');
+                        $('#submitSection').removeClass('hidden');
+                    } else {
+                        $('#employeeInfoSection').addClass('hidden');
+                        alert('ไม่พบข้อมูลพนักงาน กรุณาตรวจสอบรหัสพนักงานอีกครั้ง');
+                    }
+                })
+                .withFailureHandler(function(error) {
+                    $('#employeeInfoSection').addClass('hidden');
+                    alert('เกิดข้อผิดพลาดในการค้นหาข้อมูล: ' + error);
+                })
+                .getEmployeeData(employeeId);
+        }
+        
+        // ฟังก์ชันดึงตัวเลือกช่วงเวลาทำงานจาก Google Sheet
+        function fetchWorktimeOptions() {
+            // เรียกใช้ฟังก์ชัน getWorkTimeOptions จาก Google Apps Script
+            google.script.run
+                .withSuccessHandler(function(options) {
+                    worktimeOptions = options;
+                    
+                    // เพิ่มตัวเลือกลงใน dropdown
+                    const worktimeSelect = $('#worktime');
+                    worktimeOptions.forEach(option => {
+                        worktimeSelect.append(`<option value="${option.id}">${option.name}</option>`);
+                    });
+                })
+                .withFailureHandler(function(error) {
+                    alert('เกิดข้อผิดพลาดในการดึงข้อมูลช่วงเวลาทำงาน: ' + error);
+                })
+                .getWorkTimeOptions();
+        }
+        
+        // ฟังก์ชันตรวจสอบความถูกต้องของวันที่
+        function validateDates() {
+            const startDate = new Date($('#startDate').val());
+            const endDate = new Date($('#endDate').val());
+            
+            // ตรวจสอบว่าวันที่สิ้นสุดต้องไม่น้อยกว่าวันที่เริ่มต้น
+            if (startDate && endDate && endDate < startDate) {
+                alert('วันที่สิ้นสุดต้องไม่น้อยกว่าวันที่เริ่มต้น');
+                $('#endDate').val('');
+            }
+        }
+        
+        // ฟังก์ชันส่งฟอร์ม
+        function submitForm() {
+            // ตรวจสอบข้อมูลที่จำเป็นทั้งหมด
+            if (!$('#employeeId').val() || !$('#worktime').val() || !$('#startDate').val() || 
+                !$('#endDate').val() || !$('input[name="dayType"]:checked').val()) {
+                alert('กรุณากรอกข้อมูลให้ครบถ้วน');
+                return;
+            }
+            
+            // รวบรวมข้อมูลทั้งหมด
+            const formData = {
+                employeeId: $('#employeeId').val(),
+                employeeName: $('#employeeName').text(),
+                department: $('#employeeDepartment').text(),
+                worktime: $('#worktime option:selected').text(),
+                worktimeId: $('#worktime').val(),
+                startDate: $('#startDate').val(),
+                endDate: $('#endDate').val(),
+                dayType: $('input[name="dayType"]:checked').val()
+            };
+            
+            // แสดงข้อความกำลังประมวลผล
+            $('#submitSection button').prop('disabled', true).text('กำลังบันทึกข้อมูล...');
+            
+            // เรียกใช้ฟังก์ชัน saveWorkTimeData จาก Google Apps Script
+            google.script.run
+                .withSuccessHandler(function(result) {
+                    if (result.success) {
+                        $('#successMessage').text(result.message).removeClass('hidden');
+                        
+                        // รีเซ็ตฟอร์มหลังจากส่งข้อมูลสำเร็จ
+                        setTimeout(function() {
+                            resetForm();
+                        }, 3000);
+                    } else {
+                        $('#errorMessage').text(result.message).removeClass('hidden');
+                        $('#submitSection button').prop('disabled', false).text('ส่งข้อมูล');
+                    }
+                })
+                .withFailureHandler(function(error) {
+                    $('#errorMessage').text('เกิดข้อผิดพลาด: ' + error).removeClass('hidden');
+                    $('#submitSection button').prop('disabled', false).text('ส่งข้อมูล');
+                })
+                .saveWorkTimeData(formData);
+        }
+        
+        // ฟังก์ชันรีเซ็ตฟอร์ม
+        function resetForm() {
+            $('#employeeWorkForm')[0].reset();
+            $('#employeeInfoSection').addClass('hidden');
+            $('#worktimeSection').addClass('hidden');
+            $('#dateSection').addClass('hidden');
+            $('#dayTypeSection').addClass('hidden');
+            $('#submitSection').addClass('hidden');
+            $('#successMessage').addClass('hidden');
+            $('#errorMessage').addClass('hidden');
+            $('#submitSection button').prop('disabled', false).text('ส่งข้อมูล');
+            employeeData = null;
+        }
+        <form id="employeeWorkForm">
+            <!-- ข้อ 1: รหัสพนักงาน -->
+            <div class="form-group">
+                <label for="employeeId">1. รหัสพนักงาน:</label>
+                <input type="text" class="form-control" id="employeeId" required>
+                <button type="button" class="btn btn-info mt-2" id="searchButton">ค้นหาข้อมูลพนักงาน</button>
+            </div>
+            
+            <!-- ข้อมูลพนักงานที่ดึงมา -->
+            <div class="employee-info hidden" id="employeeInfoSection">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>ชื่อ-นามสกุล:</strong> <span id="employeeName"></span></p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>หน่วยงาน:</strong> <span id="employeeDepartment"></span></p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- ข้อ 2: ช่วงเวลาทำงาน -->
+            <div class="form-group hidden" id="worktimeSection">
+                <label for="worktime">2. ช่วงเวลาทำงาน:</label>
+                <select class="form-control" id="worktime" required>
+                    <option value="">-- เลือกช่วงเวลาทำงาน --</option>
+                    <!-- ตัวเลือกจะถูกดึงจาก Google Sheet ด้วย JavaScript -->
+                </select>
+            </div>
+            
+            <!-- ข้อ 3: วันที่เริ่มต้นและสิ้นสุด -->
+            <div class="form-group hidden" id="dateSection">
+                <label>3. ระยะเวลาทำงาน:</label>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="startDate">วันที่เริ่มต้น:</label>
+                        <input type="date" class="form-control" id="startDate" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="endDate">วันที่สิ้นสุด:</label>
+                        <input type="date" class="form-control" id="endDate" required>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- ข้อ 4: ประเภทวัน -->
+            <div class="form-group hidden" id="dayTypeSection">
+                <label>4. ประเภทวัน:</label>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="dayType" id="workday" value="วันทำงาน" required>
+                    <label class="form-check-label" for="workday">วันทำงาน</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="dayType" id="holiday" value="วันหยุด">
+                    <label class="form-check-label" for="holiday">วันหยุด</label>
+                </div>
+            </div>
+            
+            <!-- ปุ่มส่งข้อมูล -->
+            <div class="form-group hidden" id="submitSection">
+                <button type="submit" class="btn btn-primary">ส่งข้อมูล</button>
+            </div>
+        </form>
+        
+        <!-- ส่วนแสดงผลการส่งข้อมูล -->
+        <div class="alert alert-success hidden" id="successMessage">
+            บันทึกข้อมูลสำเร็จ
+        </div>
+        <div class="alert alert-danger hidden" id="errorMessage">
+            เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        // ตัวแปรสำหรับเก็บข้อมูล
+        let employeeData = null;
+        let worktimeOptions = [];
+        
+        // เมื่อโหลดหน้าเว็บเสร็จ
+        $(document).ready(function() {
+            // ปุ่มค้นหาข้อมูลพนักงาน
+            $('#searchButton').click(function() {
+                const employeeId = $('#employeeId').val().trim();
+                if (employeeId) {
+                    fetchEmployeeData(employeeId);
+                } else {
+                    alert('กรุณาระบุรหัสพนักงาน');
+                }
+            });
+            
+            // เมื่อกรอกข้อมูลวันที่เริ่มต้น
+            $('#startDate').change(function() {
+                validateDates();
+            });
+            
+            // เมื่อกรอกข้อมูลวันที่สิ้นสุด
+            $('#endDate').change(function() {
+                validateDates();
+            });
+            
+            // เมื่อส่งฟอร์ม
+            $('#employeeWorkForm').submit(function(e) {
+                e.preventDefault();
+                submitForm();
+            });
+            
+            // ดึงตัวเลือกช่วงเวลาทำงานจาก Google Sheet
+            fetchWorktimeOptions();
+        });
+        
+        
+</body>
+</html>
