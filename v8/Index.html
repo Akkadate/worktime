@@ -563,7 +563,7 @@
           });
         })
         .withFailureHandler(function(error) {
-          showError('<i class="fas fa-exclamation-circle"></i> เกิดข้อผิดพลาดในการโหลดข้อมูลช่วงเวลาทำงาน');
+          showError('<i class="fas fa-exclamation-circle"></i> เกิดข้อผิดพลาดในการโหลดข้อมูลช่วงเวลาทำงาน', 5000);
         })
         .getWorkTimeOptions();
     }
@@ -573,7 +573,7 @@
       var employeeId = document.getElementById('employeeId').value;
       
       if (!employeeId) {
-        showError('<i class="fas fa-exclamation-circle"></i> กรุณาระบุรหัสพนักงาน');
+        showError('<i class="fas fa-exclamation-circle"></i> กรุณาระบุรหัสพนักงาน', 5000);
         return;
       }
       
@@ -581,11 +581,14 @@
       hideAllMessages();
       
       // แสดงข้อความรอการโหลด
-      showStatus('<div class="loading-spinner"></div> กำลังค้นหาข้อมูลพนักงาน...');
+      showStatus('<div class="loading-spinner"></div> กำลังค้นหาข้อมูลพนักงาน...', 10000); // กำหนด timeout 10 วินาที
       
       // เรียกใช้ฟังก์ชันใน Google Apps Script
       google.script.run
         .withSuccessHandler(function(result) {
+          // ซ่อนข้อความสถานะเมื่อแสดงข้อมูลสำเร็จ (เพิ่มตรงนี้เพื่อความแน่นอน)
+          hideAllMessages();
+          
           if (result) {
             // แสดงข้อมูลพนักงาน
             document.getElementById('employeeName').textContent = result.name;
@@ -595,19 +598,15 @@
             document.getElementById('workPatternSection').classList.remove('hidden');
             document.getElementById('dateSection').classList.remove('hidden');
             
-            // ซ่อนข้อความสถานะเมื่อแสดงข้อมูลสำเร็จ
-            hideAllMessages();
-            
             // ให้ scroll ไปที่ส่วนข้อมูลพนักงาน
             document.getElementById('employeeInfoSection').scrollIntoView({ behavior: 'smooth' });
           } else {
-            hideAllMessages();
-            showError('<i class="fas fa-exclamation-circle"></i> ไม่พบข้อมูลพนักงาน กรุณาตรวจสอบรหัสพนักงาน');
+            showError('<i class="fas fa-exclamation-circle"></i> ไม่พบข้อมูลพนักงาน กรุณาตรวจสอบรหัสพนักงาน', 5000);
           }
         })
         .withFailureHandler(function(error) {
           hideAllMessages();
-          showError('<i class="fas fa-exclamation-circle"></i> เกิดข้อผิดพลาด: ' + error);
+          showError('<i class="fas fa-exclamation-circle"></i> เกิดข้อผิดพลาด: ' + error, 5000);
         })
         .getEmployeeData(employeeId);
     }
@@ -655,13 +654,13 @@
       const workPattern = document.querySelector('input[name="workPattern"]:checked');
       
       if (!startDate || !endDate || !worktimeId || !workPattern) {
-        showError('<i class="fas fa-exclamation-circle"></i> กรุณากรอกข้อมูลให้ครบถ้วน');
+        showError('<i class="fas fa-exclamation-circle"></i> กรุณากรอกข้อมูลให้ครบถ้วน', 5000);
         return;
       }
       
       // ตรวจสอบความถูกต้องของวันที่
       if (endDate < startDate) {
-        showError('<i class="fas fa-exclamation-circle"></i> วันที่สิ้นสุดต้องไม่น้อยกว่าวันที่เริ่มต้น');
+        showError('<i class="fas fa-exclamation-circle"></i> วันที่สิ้นสุดต้องไม่น้อยกว่าวันที่เริ่มต้น', 5000);
         return;
       }
       
@@ -669,7 +668,7 @@
       hideAllMessages();
       
       // แสดงข้อความรอการโหลด
-      showStatus('<div class="loading-spinner"></div> กำลังสร้างรายการวัน...');
+      showStatus('<div class="loading-spinner"></div> กำลังสร้างรายการวัน...', 3000); // กำหนด timeout 3 วินาที
       
       // ตรวจสอบรูปแบบวันทำงานที่เลือก
       const maxDaysToShow = (workPattern.value === 'same') ? 7 : 14; // 7 วันสำหรับรูปแบบเดียวกัน, 14 วันสำหรับรูปแบบสลับ
@@ -679,7 +678,7 @@
       
       // ถ้าไม่พบวันจันทร์ที่ weeknum เป็นเลขคู่ในช่วงวันที่ผู้ใช้เลือก ให้ใช้วันเริ่มต้นที่ผู้ใช้เลือก
       if (!displayStartDate) {
-        showStatus('<i class="fas fa-info-circle"></i> ไม่พบวันจันทร์ที่ weeknum เป็นเลขคู่ในช่วงวันที่เลือก จะแสดงวันในช่วงที่เลือกแทน');
+        showStatus('<i class="fas fa-info-circle"></i> ไม่พบวันจันทร์ที่ weeknum เป็นเลขคู่ในช่วงวันที่เลือก จะแสดงวันในช่วงที่เลือกแทน', 3000);
         displayStartDate = new Date(startDate);
       }
       
@@ -767,7 +766,7 @@
       // กรณีที่ไม่มีวันที่แสดง
       if (dayCount === 0) {
         hideAllMessages();
-        showError('<i class="fas fa-exclamation-circle"></i> ไม่มีวันที่อยู่ในช่วงที่เลือก');
+        showError('<i class="fas fa-exclamation-circle"></i> ไม่มีวันที่อยู่ในช่วงที่เลือก', 5000);
         return;
       }
       
@@ -788,14 +787,14 @@
     function submitForm() {
       // ตรวจสอบข้อมูลที่จำเป็นทั้งหมด
       if (!document.getElementById('employeeId').value || !document.getElementById('worktime').value || datesList.length === 0) {
-        showError('<i class="fas fa-exclamation-circle"></i> กรุณากรอกข้อมูลให้ครบถ้วน');
+        showError('<i class="fas fa-exclamation-circle"></i> กรุณากรอกข้อมูลให้ครบถ้วน', 5000);
         return;
       }
       
       // ตรวจสอบว่าเลือกสถานะของทุกวันแล้ว
       const allRadios = document.querySelectorAll('.day-status-radio:checked');
       if (allRadios.length < datesList.length) {
-        showError('<i class="fas fa-exclamation-circle"></i> กรุณาเลือกสถานะ (วันทำงาน/วันหยุด) ให้ครบทุกวัน');
+        showError('<i class="fas fa-exclamation-circle"></i> กรุณาเลือกสถานะ (วันทำงาน/วันหยุด) ให้ครบทุกวัน', 5000);
         return;
       }
       
@@ -803,7 +802,7 @@
       hideAllMessages();
       
       // แสดงข้อความรอการโหลด
-      showStatus('<div class="loading-spinner"></div> กำลังบันทึกข้อมูล...');
+      showStatus('<div class="loading-spinner"></div> กำลังบันทึกข้อมูล...', 10000);
       
       // เตรียมข้อมูลพื้นฐาน
       const baseData = {
@@ -852,7 +851,7 @@
           hideAllMessages(); // ซ่อนทุกข้อความก่อน
           
           if (result.success) {
-            showSuccess('<i class="fas fa-check-circle"></i> ' + result.message);
+            showSuccess('<i class="fas fa-check-circle"></i> ' + result.message, 3000);
             document.getElementById('successMessage').scrollIntoView({ behavior: 'smooth' });
             
             // รีเซ็ตฟอร์มหลังจากส่งข้อมูลสำเร็จ
@@ -861,13 +860,13 @@
               resetForm();
             }, 3000);
           } else {
-            showError('<i class="fas fa-exclamation-circle"></i> ' + result.message);
+            showError('<i class="fas fa-exclamation-circle"></i> ' + result.message, 5000);
             document.getElementById('errorMessage').scrollIntoView({ behavior: 'smooth' });
           }
         })
         .withFailureHandler(function(error) {
           hideAllMessages(); // ซ่อนทุกข้อความก่อน
-          showError('<i class="fas fa-exclamation-circle"></i> เกิดข้อผิดพลาด: ' + error);
+          showError('<i class="fas fa-exclamation-circle"></i> เกิดข้อผิดพลาด: ' + error, 5000);
           document.getElementById('errorMessage').scrollIntoView({ behavior: 'smooth' });
         })
         .saveWorkTimeData(formData);
@@ -979,34 +978,61 @@
     }
     
     // ฟังก์ชันแสดงข้อความสำเร็จ
-    function showSuccess(message) {
+    function showSuccess(message, timeout = 5000) {
       const successMessage = document.getElementById('successMessage');
       successMessage.innerHTML = message;
       successMessage.classList.remove('hidden');
       document.getElementById('errorMessage').classList.add('hidden');
       document.getElementById('status').classList.add('hidden');
+      
+      // ซ่อนข้อความหลังจากระยะเวลาที่กำหนด
+      if (timeout > 0) {
+        clearTimeout(window.messageTimeout);
+        window.messageTimeout = setTimeout(function() {
+          successMessage.classList.add('hidden');
+        }, timeout);
+      }
     }
     
     // ฟังก์ชันแสดงข้อความผิดพลาด
-    function showError(message) {
+    function showError(message, timeout = 5000) {
       const errorMessage = document.getElementById('errorMessage');
       errorMessage.innerHTML = message;
       errorMessage.classList.remove('hidden');
       document.getElementById('successMessage').classList.add('hidden');
       document.getElementById('status').classList.add('hidden');
+      
+      // ซ่อนข้อความหลังจากระยะเวลาที่กำหนด
+      if (timeout > 0) {
+        clearTimeout(window.messageTimeout);
+        window.messageTimeout = setTimeout(function() {
+          errorMessage.classList.add('hidden');
+        }, timeout);
+      }
     }
     
     // ฟังก์ชันแสดงสถานะ
-    function showStatus(message) {
+    function showStatus(message, timeout = 0) {
       const statusMessage = document.getElementById('status');
       statusMessage.innerHTML = message;
       statusMessage.classList.remove('hidden');
       document.getElementById('successMessage').classList.add('hidden');
       document.getElementById('errorMessage').classList.add('hidden');
+      
+      // ซ่อนข้อความหลังจากระยะเวลาที่กำหนด
+      if (timeout > 0) {
+        clearTimeout(window.messageTimeout);
+        window.messageTimeout = setTimeout(function() {
+          statusMessage.classList.add('hidden');
+        }, timeout);
+      }
     }
     
     // ฟังก์ชันซ่อนข้อความทั้งหมด
     function hideAllMessages() {
+      // ล้าง timeout ที่อาจกำลังทำงานอยู่
+      clearTimeout(window.messageTimeout);
+      
       document.getElementById('successMessage').classList.add('hidden');
       document.getElementById('errorMessage').classList.add('hidden');
       document.getElementById('status').classList.add('hidden');
@@ -1034,7 +1060,7 @@
         });
       })
       .withFailureHandler(function(error) {
-        showError('<i class="fas fa-exclamation-circle"></i> เกิดข้อผิดพลาดในการโหลดข้อมูลช่วงเวลาทำงาน');
+        showError('<i class="fas fa-exclamation-circle"></i> เกิดข้อผิดพลาดในการโหลดข้อมูลช่วงเวลาทำงาน', 5000);
       })
       .getWorkTimeOptions();
   </script>
