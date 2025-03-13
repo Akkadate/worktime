@@ -1,1 +1,1042 @@
-dd
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>แบบฟอร์มสำรวจเวลาทำงานของพนักงาน</title>
+  
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  
+  <!-- Google Fonts สำหรับภาษาไทย -->
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome สำหรับไอคอน -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    :root {
+      --primary-color: #2563eb;
+      --primary-light: #e0eaff;
+      --success-color: #10b981;
+      --danger-color: #ef4444;
+      --text-color: #1e293b;
+      --background-color: #f1f5f9;
+      --card-color: #ffffff;
+      --border-radius: 12px;
+      --border-radius-sm: 8px;
+      --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      --transition: all 0.25s ease;
+    }
+    
+    body {
+      font-family: 'Sarabun', sans-serif;
+      background-color: var(--background-color);
+      color: var(--text-color);
+      margin: 0;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    
+    .hidden {
+      display: none;
+    }
+    
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: var(--card-color);
+      padding: 30px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+    }
+    
+    h2 {
+      color: var(--primary-color);
+      margin-bottom: 30px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid var(--primary-light);
+      text-align: center;
+    }
+    
+    .form-group {
+      margin-bottom: 25px;
+      position: relative;
+    }
+    
+    .form-control, .btn {
+      border-radius: var(--border-radius-sm);
+      padding: 10px 15px;
+      font-size: 1rem;
+      border: 1px solid #e2e8f0;
+      transition: var(--transition);
+    }
+    
+    .form-control:focus {
+      box-shadow: 0 0 0 3px var(--primary-light);
+      border-color: var(--primary-color);
+    }
+    
+    label {
+      font-weight: 500;
+      margin-bottom: 8px;
+      color: var(--text-color);
+      display: block;
+    }
+    
+    .section-title {
+      position: relative;
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    
+    .section-title .badge {
+      background-color: var(--primary-color);
+      color: white;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 10px;
+    }
+    
+    .section-title .title-text {
+      font-weight: 600;
+      font-size: 1.05rem;
+    }
+    
+    .employee-info {
+      background-color: var(--primary-light);
+      padding: 20px;
+      border-radius: var(--border-radius-sm);
+      margin-bottom: 25px;
+      border-left: 4px solid var(--primary-color);
+      transition: var(--transition);
+    }
+    
+    .employee-info p {
+      margin-bottom: 8px;
+    }
+    
+    .date-item {
+      background-color: #f8f9fa;
+      padding: 18px;
+      border-radius: var(--border-radius-sm);
+      margin-bottom: 15px;
+      border-left: 4px solid #6c757d;
+      transition: var(--transition);
+    }
+    
+    .weekday {
+      font-weight: 600;
+      color: var(--primary-color);
+    }
+    
+    .weekend {
+      font-weight: 600;
+      color: var(--danger-color);
+    }
+    
+    .btn {
+      font-weight: 500;
+      padding: 12px 16px;
+      transition: var(--transition);
+      cursor: pointer;
+    }
+    
+    .btn-primary {
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background-color: #1d4ed8;
+      border-color: #1d4ed8;
+      box-shadow: 0 3px 8px rgba(37, 99, 235, 0.3);
+    }
+    
+    .btn-info {
+      background-color: #3b82f6;
+      border-color: #3b82f6;
+      color: white;
+    }
+    
+    .btn-info:hover {
+      background-color: #2563eb;
+      border-color: #2563eb;
+      box-shadow: 0 3px 8px rgba(59, 130, 246, 0.3);
+    }
+    
+    .btn-success {
+      background-color: var(--success-color);
+      border-color: var(--success-color);
+      color: white;
+    }
+    
+    .btn-success:hover {
+      background-color: #059669;
+      border-color: #059669;
+      box-shadow: 0 3px 8px rgba(16, 185, 129, 0.3);
+    }
+    
+    .btn i {
+      margin-right: 6px;
+    }
+    
+    .alert {
+      border-radius: var(--border-radius-sm);
+      padding: 15px;
+      margin-top: 20px;
+      border: none;
+      display: flex;
+      align-items: center;
+    }
+    
+    .alert i {
+      margin-right: 10px;
+      font-size: 18px;
+    }
+    
+    .alert-success {
+      background-color: #d1fae5;
+      color: #065f46;
+    }
+    
+    .alert-danger {
+      background-color: #fee2e2;
+      color: #b91c1c;
+    }
+    
+    .alert-info {
+      background-color: #dbeafe;
+      color: #1e40af;
+    }
+    
+    /* รูปแบบสำหรับตัวเลือกที่เลือก */
+    .selected-option {
+      background-color: var(--primary-light);
+      border-left: 4px solid var(--primary-color);
+      font-weight: 600;
+      transform: translateX(5px);
+    }
+    
+    /* สำหรับรูปแบบการทำงานที่เลือก */
+    .work-pattern-container {
+      margin-top: 12px;
+    }
+    
+    .work-pattern-option {
+      padding: 16px;
+      border-radius: var(--border-radius-sm);
+      border: 1px solid #e2e8f0;
+      margin-bottom: 12px;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+    }
+    
+    .work-pattern-option:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .work-pattern-selected {
+      background-color: var(--primary-light);
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+    }
+    
+    .work-pattern-option .form-check {
+      padding-left: 0;
+      margin-right: 12px;
+    }
+    
+    .work-pattern-option .form-check-input {
+      margin-top: 0;
+      margin-left: 0;
+      cursor: pointer;
+    }
+    
+    .work-pattern-option .form-check-label {
+      cursor: pointer;
+      margin-left: 28px;
+    }
+    
+    /* สีสำหรับสถานะวันทำงาน */
+    .workday-selected {
+      color: var(--success-color);
+      font-weight: 600;
+    }
+    
+    .holiday-selected {
+      color: var(--danger-color);
+      font-weight: 600;
+    }
+    
+    .day-status-container {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    
+    .day-status-option {
+      flex: 1;
+      min-width: 120px;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--border-radius-sm);
+      padding: 8px 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      transition: var(--transition);
+    }
+    
+    .day-status-option:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    }
+    
+    .day-status-option .form-check {
+      padding-left: 0;
+      margin-bottom: 0;
+    }
+    
+    .day-status-option .form-check-input {
+      margin-top: 0;
+      margin-left: 0;
+    }
+    
+    .day-status-option.workday-option.selected {
+      background-color: #d1fae5;
+      border-color: var(--success-color);
+    }
+    
+    .day-status-option.holiday-option.selected {
+      background-color: #fee2e2;
+      border-color: var(--danger-color);
+    }
+    
+    .date-separator {
+      height: 1px;
+      background-color: #e2e8f0;
+      margin: 25px 0;
+    }
+    
+    .section-header {
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    
+    /* ทำให้ responsive มากขึ้น */
+    @media (max-width: 768px) {
+      .container {
+        padding: 20px 15px;
+      }
+      
+      h2 {
+        font-size: 1.5rem;
+      }
+      
+      .date-item {
+        padding: 15px;
+      }
+      
+      .day-status-container {
+        flex-direction: column;
+        gap: 8px;
+      }
+      
+      .day-status-option {
+        width: 100%;
+      }
+    }
+    
+    @media (max-width: 576px) {
+      body {
+        margin: 0;
+        padding: 10px;
+      }
+      
+      .container {
+        padding: 15px 12px;
+        border-radius: 8px;
+      }
+      
+      h2 {
+        font-size: 1.3rem;
+        margin-bottom: 20px;
+        padding-bottom: 12px;
+      }
+      
+      .btn {
+        padding: 10px 14px;
+      }
+      
+      .form-control {
+        padding: 8px 12px;
+      }
+    }
+    
+    /* เพิ่มเติม animation สำหรับโหลดข้อมูล */
+    .loading-spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      margin-right: 8px;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+    }
+    
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+    
+    .fade-in {
+      animation: fadeIn 0.5s ease-in;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h2>แบบฟอร์มสำรวจเวลาทำงานของพนักงาน</h2>
+    
+    <form id="employeeWorkForm">
+      <!-- ข้อ 1: รหัสพนักงาน -->
+      <div class="form-group">
+        <div class="section-title">
+          <div class="badge">1</div>
+          <div class="title-text">รหัสพนักงาน</div>
+        </div>
+        <input type="text" class="form-control" id="employeeId" placeholder="กรุณาระบุรหัสพนักงาน เช่น E001">
+        <button type="button" class="btn btn-primary mt-3 w-100" id="searchButton" onclick="searchEmployee()">
+          <i class="fas fa-search"></i> ค้นหาข้อมูลพนักงาน
+        </button>
+      </div>
+      
+      <!-- ข้อมูลพนักงานที่ดึงมา -->
+      <div class="employee-info hidden fade-in" id="employeeInfoSection">
+        <div class="row">
+          <div class="col-md-6">
+            <p><i class="fas fa-user me-2"></i> <strong>ชื่อ-นามสกุล:</strong> <span id="employeeName"></span></p>
+          </div>
+          <div class="col-md-6">
+            <p><i class="fas fa-building me-2"></i> <strong>หน่วยงาน:</strong> <span id="employeeDepartment"></span></p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- ข้อ 2: ช่วงเวลาทำงาน -->
+      <div class="form-group hidden fade-in" id="worktimeSection">
+        <div class="section-title">
+          <div class="badge">2</div>
+          <div class="title-text">ช่วงเวลาทำงาน</div>
+        </div>
+        <select class="form-control" id="worktime" required>
+          <option value="">-- เลือกช่วงเวลาทำงาน --</option>
+          <!-- จะถูกเติมโดย JavaScript -->
+        </select>
+      </div>
+      
+      <!-- ข้อ 3: รูปแบบวันทำงาน -->
+      <div class="form-group hidden fade-in" id="workPatternSection">
+        <div class="section-title">
+          <div class="badge">3</div>
+          <div class="title-text">รูปแบบวันทำงานแต่ละสัปดาห์</div>
+        </div>
+        
+        <div class="work-pattern-container">
+          <div class="work-pattern-option" onclick="selectWorkPattern('samePattern')">
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="workPattern" id="samePattern" value="same" required>
+              <label class="form-check-label" for="samePattern">
+                <i class="fas fa-calendar-check me-2"></i> วันทำงานเหมือนกันทุกสัปดาห์
+              </label>
+            </div>
+          </div>
+          
+          <div class="work-pattern-option" onclick="selectWorkPattern('alternatePattern')">
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="workPattern" id="alternatePattern" value="alternate">
+              <label class="form-check-label" for="alternatePattern">
+                <i class="fas fa-calendar-alt me-2"></i> มีการสลับวันทำงานทุกสัปดาห์ (5.5 วัน)
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- ข้อ 4: วันที่เริ่มต้นและสิ้นสุด -->
+      <div class="form-group hidden fade-in" id="dateSection">
+        <div class="section-title">
+          <div class="badge">4</div>
+          <div class="title-text">ระยะเวลาทำงาน</div>
+        </div>
+        
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label for="startDate">วันที่เริ่มต้น: <span class="text-danger">*</span></label>
+            <input type="date" class="form-control" id="startDate" required>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label for="endDate">วันที่สิ้นสุด: <span class="text-danger">*</span></label>
+            <input type="date" class="form-control" id="endDate" required>
+          </div>
+        </div>
+        <small class="text-muted"><i class="fas fa-info-circle me-1"></i> หมายเหตุ: ระบบจะแสดงรายการวันสำหรับกำหนดสถานะตามรูปแบบวันทำงานที่เลือก</small>
+        <div class="mt-3">
+          <button type="button" class="btn btn-info w-100" onclick="generateDatesList()">
+            <i class="fas fa-calendar-days"></i> แสดงรายการวันทำงาน
+          </button>
+        </div>
+      </div>
+      
+      <!-- ส่วนแสดงรายละเอียดวัน -->
+      <div class="hidden fade-in" id="datesDetailSection">
+        <div class="date-separator"></div>
+        <div class="section-title">
+          <div class="badge">5</div>
+          <div class="title-text" id="datesDetailTitle">กำหนดสถานะในแต่ละวัน</div>
+        </div>
+        <div id="datesContainer">
+          <!-- รายการวันจะถูกสร้างโดย JavaScript -->
+        </div>
+        <button type="button" class="btn btn-success mt-4 w-100" onclick="submitForm()">
+          <i class="fas fa-save"></i> บันทึกข้อมูล
+        </button>
+      </div>
+    </form>
+    
+    <div class="alert alert-success hidden mt-3 fade-in" id="successMessage"></div>
+    <div class="alert alert-danger hidden mt-3 fade-in" id="errorMessage"></div>
+    <div class="alert alert-info hidden mt-3 fade-in" id="status"></div>
+  </div>
+  
+  <script>
+    // ตัวแปรสำหรับเก็บข้อมูล
+    let employeeData = null;
+    let datesList = [];
+    
+    // ตั้งค่าเริ่มต้นเมื่อโหลดหน้าเว็บ
+    document.addEventListener('DOMContentLoaded', function() {
+      // ตั้งค่าวันที่ปัจจุบันเป็นค่าเริ่มต้นสำหรับช่องวันที่
+      const today = new Date();
+      const formattedDate = today.toISOString().split('T')[0];
+      document.getElementById('startDate').value = formattedDate;
+      
+      // เพิ่มวันที่อีก 14 วัน
+      const endDate = new Date(today);
+      endDate.setDate(today.getDate() + 14);
+      document.getElementById('endDate').value = endDate.toISOString().split('T')[0];
+      
+      // โหลดตัวเลือกช่วงเวลาทำงาน
+      loadWorkTimeOptions();
+    });
+    
+    // ฟังก์ชันโหลดตัวเลือกช่วงเวลาทำงาน
+    function loadWorkTimeOptions() {
+      // เรียกใช้ฟังก์ชันใน Google Apps Script
+      google.script.run
+        .withSuccessHandler(function(options) {
+          const worktimeSelect = document.getElementById('worktime');
+          options.forEach(function(option) {
+            const optionElement = document.createElement('option');
+            optionElement.value = option.id;
+            optionElement.textContent = option.name;
+            worktimeSelect.appendChild(optionElement);
+          });
+        })
+        .withFailureHandler(function(error) {
+          showError('<i class="fas fa-exclamation-circle"></i> เกิดข้อผิดพลาดในการโหลดข้อมูลช่วงเวลาทำงาน');
+        })
+        .getWorkTimeOptions();
+    }
+    
+    // ฟังก์ชันค้นหาข้อมูลพนักงาน
+    function searchEmployee() {
+      var employeeId = document.getElementById('employeeId').value;
+      
+      if (!employeeId) {
+        showError('<i class="fas fa-exclamation-circle"></i> กรุณาระบุรหัสพนักงาน');
+        return;
+      }
+      
+      // ซ่อนข้อความแจ้งเตือนทั้งหมดก่อน
+      hideAllMessages();
+      
+      // แสดงข้อความรอการโหลด
+      showStatus('<div class="loading-spinner"></div> กำลังค้นหาข้อมูลพนักงาน...');
+      
+      // เรียกใช้ฟังก์ชันใน Google Apps Script
+      google.script.run
+        .withSuccessHandler(function(result) {
+          if (result) {
+            // แสดงข้อมูลพนักงาน
+            document.getElementById('employeeName').textContent = result.name;
+            document.getElementById('employeeDepartment').textContent = result.department;
+            document.getElementById('employeeInfoSection').classList.remove('hidden');
+            document.getElementById('worktimeSection').classList.remove('hidden');
+            document.getElementById('workPatternSection').classList.remove('hidden');
+            document.getElementById('dateSection').classList.remove('hidden');
+            
+            // ซ่อนข้อความสถานะเมื่อแสดงข้อมูลสำเร็จ
+            hideAllMessages();
+            
+            // ให้ scroll ไปที่ส่วนข้อมูลพนักงาน
+            document.getElementById('employeeInfoSection').scrollIntoView({ behavior: 'smooth' });
+          } else {
+            hideAllMessages();
+            showError('<i class="fas fa-exclamation-circle"></i> ไม่พบข้อมูลพนักงาน กรุณาตรวจสอบรหัสพนักงาน');
+          }
+        })
+        .withFailureHandler(function(error) {
+          hideAllMessages();
+          showError('<i class="fas fa-exclamation-circle"></i> เกิดข้อผิดพลาด: ' + error);
+        })
+        .getEmployeeData(employeeId);
+    }
+    
+    // ฟังก์ชันเลือกรูปแบบวันทำงาน
+    function selectWorkPattern(patternId) {
+      // ล้างการเลือกทั้งหมด
+      document.querySelectorAll('.work-pattern-option').forEach(function(option) {
+        option.classList.remove('work-pattern-selected');
+      });
+      
+      // เลือก radio button
+      document.getElementById(patternId).checked = true;
+      
+      // highlight ตัวเลือกที่เลือก
+      document.getElementById(patternId).closest('.work-pattern-option').classList.add('work-pattern-selected');
+    }
+    
+    // ฟังก์ชันเลือกสถานะวัน
+    function selectDayStatus(dateKey, status) {
+      const workdayOption = document.getElementById(`workday_option_${dateKey}`);
+      const holidayOption = document.getElementById(`holiday_option_${dateKey}`);
+      const workdayRadio = document.getElementById(`workday_${dateKey}`);
+      const holidayRadio = document.getElementById(`holiday_${dateKey}`);
+      
+      // รีเซ็ตสถานะทั้งหมด
+      workdayOption.classList.remove('selected');
+      holidayOption.classList.remove('selected');
+      
+      if (status === 'work') {
+        workdayRadio.checked = true;
+        workdayOption.classList.add('selected');
+      } else {
+        holidayRadio.checked = true;
+        holidayOption.classList.add('selected');
+      }
+    }
+    
+    // ฟังก์ชันสร้างรายการวัน
+    function generateDatesList() {
+      // ตรวจสอบข้อมูลที่จำเป็น
+      const startDate = new Date(document.getElementById('startDate').value);
+      const endDate = new Date(document.getElementById('endDate').value);
+      const worktimeId = document.getElementById('worktime').value;
+      const workPattern = document.querySelector('input[name="workPattern"]:checked');
+      
+      if (!startDate || !endDate || !worktimeId || !workPattern) {
+        showError('<i class="fas fa-exclamation-circle"></i> กรุณากรอกข้อมูลให้ครบถ้วน');
+        return;
+      }
+      
+      // ตรวจสอบความถูกต้องของวันที่
+      if (endDate < startDate) {
+        showError('<i class="fas fa-exclamation-circle"></i> วันที่สิ้นสุดต้องไม่น้อยกว่าวันที่เริ่มต้น');
+        return;
+      }
+      
+      // ซ่อนข้อความแจ้งเตือนทั้งหมดก่อน
+      hideAllMessages();
+      
+      // แสดงข้อความรอการโหลด
+      showStatus('<div class="loading-spinner"></div> กำลังสร้างรายการวัน...');
+      
+      // ตรวจสอบรูปแบบวันทำงานที่เลือก
+      const maxDaysToShow = (workPattern.value === 'same') ? 7 : 14; // 7 วันสำหรับรูปแบบเดียวกัน, 14 วันสำหรับรูปแบบสลับ
+      
+      // ค้นหาวันจันทร์แรกที่ weeknum เป็นเลขคู่ ที่อยู่ในช่วงวันที่ผู้ใช้เลือก
+      let displayStartDate = findEvenWeekMondayInRange(startDate, endDate);
+      
+      // ถ้าไม่พบวันจันทร์ที่ weeknum เป็นเลขคู่ในช่วงวันที่ผู้ใช้เลือก ให้ใช้วันเริ่มต้นที่ผู้ใช้เลือก
+      if (!displayStartDate) {
+        showStatus('<i class="fas fa-info-circle"></i> ไม่พบวันจันทร์ที่ weeknum เป็นเลขคู่ในช่วงวันที่เลือก จะแสดงวันในช่วงที่เลือกแทน');
+        displayStartDate = new Date(startDate);
+      }
+      
+      // สร้างรายการวัน
+      datesList = [];
+      const datesContainer = document.getElementById('datesContainer');
+      datesContainer.innerHTML = ''; // ล้างข้อมูลเดิม
+      
+      // ตั้งค่าวันที่
+      const currentDate = new Date(displayStartDate);
+      let dayCount = 0;
+      
+      // วนลูปสร้างรายการวัน (แสดงไม่เกิน maxDaysToShow วัน และไม่เกินวันสิ้นสุดที่ผู้ใช้เลือก)
+      while (dayCount < maxDaysToShow && currentDate <= endDate) {
+        const dateObj = {
+          date: new Date(currentDate),
+          formattedDate: formatDate(currentDate),
+          dayOfWeek: getDayOfWeek(currentDate),
+          isWeekend: isWeekend(currentDate),
+          status: null // ไม่กำหนดค่าเริ่มต้นผู้ใช้ต้องเลือกเอง
+        };
+        
+        datesList.push(dateObj);
+        
+        // สร้าง HTML สำหรับแต่ละวัน
+        const dateItem = document.createElement('div');
+        dateItem.className = 'date-item fade-in';
+        
+        // ช่วงเวลาก่อนแสดงผล (animation)
+        setTimeout(() => dateItem.classList.add('visible'), dayCount * 50);
+        
+        // กำหนดสีขอบตามประเภทวัน (วันทำงาน/วันหยุด)
+        if (dateObj.isWeekend) {
+          dateItem.style.borderLeftColor = '#ef4444'; // สีแดงสำหรับวันหยุด
+        } else {
+          dateItem.style.borderLeftColor = '#10b981'; // สีเขียวสำหรับวันทำงาน
+        }
+        
+        // สร้าง HTML สำหรับรายการวัน
+        const dateKey = dateObj.date.getTime();
+        
+        let dayIcon = dateObj.isWeekend ? 
+          '<i class="fas fa-calendar-times text-danger me-2"></i>' : 
+          '<i class="fas fa-calendar-day text-success me-2"></i>';
+          
+        dateItem.innerHTML = `
+          <div class="row align-items-center">
+            <div class="col-md-6 mb-2 mb-md-0">
+              <p class="mb-0 ${dateObj.isWeekend ? 'weekend' : 'weekday'}">
+                ${dayIcon} ${dateObj.formattedDate} (${dateObj.dayOfWeek})
+              </p>
+            </div>
+            <div class="col-md-6">
+              <div class="day-status-container">
+                <div id="workday_option_${dateKey}" class="day-status-option workday-option" onclick="selectDayStatus('${dateKey}', 'work')">
+                  <div class="form-check">
+                    <input class="form-check-input day-status-radio" type="radio" name="dayStatus_${dateKey}" 
+                      id="workday_${dateKey}" value="1" required>
+                    <label class="form-check-label workday-selected" for="workday_${dateKey}">
+                      <i class="fas fa-briefcase me-1"></i> วันทำงาน
+                    </label>
+                  </div>
+                </div>
+                <div id="holiday_option_${dateKey}" class="day-status-option holiday-option" onclick="selectDayStatus('${dateKey}', 'holiday')">
+                  <div class="form-check">
+                    <input class="form-check-input day-status-radio" type="radio" name="dayStatus_${dateKey}" 
+                      id="holiday_${dateKey}" value="0" required>
+                    <label class="form-check-label holiday-selected" for="holiday_${dateKey}">
+                      <i class="fas fa-umbrella-beach me-1"></i> วันหยุด
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+        
+        datesContainer.appendChild(dateItem);
+        
+        // เพิ่มวันที่ไปอีก 1 วัน
+        currentDate.setDate(currentDate.getDate() + 1);
+        dayCount++;
+      }
+      
+      // กรณีที่ไม่มีวันที่แสดง
+      if (dayCount === 0) {
+        hideAllMessages();
+        showError('<i class="fas fa-exclamation-circle"></i> ไม่มีวันที่อยู่ในช่วงที่เลือก');
+        return;
+      }
+      
+      // เพิ่มข้อความแสดงช่วงวันที่และรูปแบบที่เลือก
+      let patternText = workPattern.value === 'same' ? 'วันทำงานเหมือนกันทุกสัปดาห์' : 'มีการสลับวันทำงานทุกสัปดาห์ (5.5 วัน)';
+      document.getElementById('datesDetailTitle').textContent = 
+        `กำหนดสถานะในแต่ละวัน: (${formatDate(displayStartDate)} - ${formatDate(new Date(currentDate.getTime() - 86400000))}, ${patternText})`;
+      
+      // แสดงส่วนรายละเอียดวัน
+      document.getElementById('datesDetailSection').classList.remove('hidden');
+      document.getElementById('datesDetailSection').scrollIntoView({ behavior: 'smooth' });
+      
+      // ซ่อนข้อความสถานะเมื่อแสดงรายการวันสำเร็จ
+      hideAllMessages();
+    }
+    
+    // ฟังก์ชันส่งฟอร์ม
+    function submitForm() {
+      // ตรวจสอบข้อมูลที่จำเป็นทั้งหมด
+      if (!document.getElementById('employeeId').value || !document.getElementById('worktime').value || datesList.length === 0) {
+        showError('<i class="fas fa-exclamation-circle"></i> กรุณากรอกข้อมูลให้ครบถ้วน');
+        return;
+      }
+      
+      // ตรวจสอบว่าเลือกสถานะของทุกวันแล้ว
+      const allRadios = document.querySelectorAll('.day-status-radio:checked');
+      if (allRadios.length < datesList.length) {
+        showError('<i class="fas fa-exclamation-circle"></i> กรุณาเลือกสถานะ (วันทำงาน/วันหยุด) ให้ครบทุกวัน');
+        return;
+      }
+      
+      // ซ่อนข้อความแจ้งเตือนทั้งหมดก่อน
+      hideAllMessages();
+      
+      // แสดงข้อความรอการโหลด
+      showStatus('<div class="loading-spinner"></div> กำลังบันทึกข้อมูล...');
+      
+      // เตรียมข้อมูลพื้นฐาน
+      const baseData = {
+        employeeId: document.getElementById('employeeId').value,
+        employeeName: document.getElementById('employeeName').textContent,
+        department: document.getElementById('employeeDepartment').textContent,
+        worktime: document.getElementById('worktime').options[document.getElementById('worktime').selectedIndex].text,
+        worktimeId: document.getElementById('worktime').value,
+        workPattern: document.querySelector('input[name="workPattern"]:checked').value,
+        startDate: document.getElementById('startDate').value,
+        endDate: document.getElementById('endDate').value
+      };
+      
+      // เก็บข้อมูลสถานะของแต่ละวัน
+      const datesData = [];
+      
+      datesList.forEach(dateObj => {
+        const timeKey = dateObj.date.getTime();
+        const workdayRadio = document.getElementById(`workday_${timeKey}`);
+        const holidayRadio = document.getElementById(`holiday_${timeKey}`);
+        
+        // ตรวจสอบว่าเลือกสถานะหรือยัง
+        if (!workdayRadio.checked && !holidayRadio.checked) {
+          throw new Error(`ยังไม่ได้เลือกสถานะสำหรับวันที่ ${dateObj.formattedDate}`);
+        }
+        
+        // ดึงค่าที่เลือก (1 = ทำงาน, 0 = วันหยุด)
+        const status = workdayRadio.checked ? 1 : 0;
+        
+        datesData.push({
+          date: formatDate(dateObj.date),
+          dayOfWeek: dateObj.dayOfWeek,
+          status: status // เก็บเป็นตัวเลข 1 หรือ 0
+        });
+      });
+      
+      // รวมข้อมูลทั้งหมด
+      const formData = {
+        ...baseData,
+        dates: datesData
+      };
+      
+      // เรียกใช้ฟังก์ชัน saveWorkTimeData จาก Google Apps Script
+      google.script.run
+        .withSuccessHandler(function(result) {
+          hideAllMessages(); // ซ่อนทุกข้อความก่อน
+          
+          if (result.success) {
+            showSuccess('<i class="fas fa-check-circle"></i> ' + result.message);
+            document.getElementById('successMessage').scrollIntoView({ behavior: 'smooth' });
+            
+            // รีเซ็ตฟอร์มหลังจากส่งข้อมูลสำเร็จ
+            setTimeout(function() {
+              hideAllMessages(); // ซ่อนข้อความก่อนรีเซ็ตฟอร์ม
+              resetForm();
+            }, 3000);
+          } else {
+            showError('<i class="fas fa-exclamation-circle"></i> ' + result.message);
+            document.getElementById('errorMessage').scrollIntoView({ behavior: 'smooth' });
+          }
+        })
+        .withFailureHandler(function(error) {
+          hideAllMessages(); // ซ่อนทุกข้อความก่อน
+          showError('<i class="fas fa-exclamation-circle"></i> เกิดข้อผิดพลาด: ' + error);
+          document.getElementById('errorMessage').scrollIntoView({ behavior: 'smooth' });
+        })
+        .saveWorkTimeData(formData);
+    }
+    
+    // ฟังก์ชันหาวันจันทร์แรกที่ weeknum เป็นเลขคู่ ที่อยู่ในช่วงวันที่ผู้ใช้เลือก
+    function findEvenWeekMondayInRange(startDate, endDate) {
+      // ค้นหาวันจันทร์แรกตั้งแต่วันเริ่มต้น
+      const firstMonday = new Date(startDate);
+      const dayOfWeek = firstMonday.getDay(); // 0 = อาทิตย์, 1 = จันทร์, ...
+      
+      if (dayOfWeek === 1) {
+        // ถ้าวันเริ่มต้นเป็นวันจันทร์อยู่แล้ว
+        // ตรวจสอบว่า weeknum เป็นเลขคู่หรือไม่
+        if (getWeekNumber(firstMonday) % 2 === 0) {
+          return firstMonday;
+        }
+      }
+      
+      // คำนวณวันจันทร์ถัดไป
+      const daysUntilMonday = dayOfWeek === 0 ? 1 : 8 - dayOfWeek;
+      const nextMonday = new Date(startDate);
+      nextMonday.setDate(nextMonday.getDate() + daysUntilMonday);
+      
+      // ตรวจสอบว่าวันจันทร์ถัดไปยังอยู่ในช่วงวันที่ผู้ใช้เลือกหรือไม่
+      if (nextMonday > endDate) {
+        return null; // ไม่พบวันจันทร์ในช่วงวันที่ผู้ใช้เลือก
+      }
+      
+      // ตรวจสอบว่า weeknum เป็นเลขคู่หรือไม่
+      if (getWeekNumber(nextMonday) % 2 === 0) {
+        return nextMonday;
+      }
+      
+      // ถ้ายังไม่พบ ให้เพิ่มไปอีก 1 สัปดาห์
+      const nextNextMonday = new Date(nextMonday);
+      nextNextMonday.setDate(nextNextMonday.getDate() + 7);
+      
+      // ตรวจสอบว่าวันจันทร์ถัดไปยังอยู่ในช่วงวันที่ผู้ใช้เลือกหรือไม่
+      if (nextNextMonday > endDate) {
+        return null; // ไม่พบวันจันทร์ที่ weeknum เป็นเลขคู่ในช่วงวันที่ผู้ใช้เลือก
+      }
+      
+      return nextNextMonday; // weeknum ต้องเป็นเลขคู่แน่นอน เพราะห่างกัน 1 สัปดาห์
+    }
+    
+    // ฟังก์ชันคำนวณเลข weeknum ในปี (ISO-8601)
+    function getWeekNumber(date) {
+      const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+      const dayNum = d.getUTCDay() || 7;
+      d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+      const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+      return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+    }
+    
+    // ฟังก์ชันจัดรูปแบบวันที่ (วัน/เดือน/ปี)
+    function formatDate(date) {
+      const day = date.getDate().toString().padStart(2, '0');
+      const month = (date.getMonth() + 1).toString().padStart(2, '0');
+      const year = date.getFullYear();
+      return `${day}/${month}/${year}`;
+    }
+    
+    // ฟังก์ชันแปลงวันในสัปดาห์เป็นภาษาไทย
+    function getDayOfWeek(date) {
+      const dayNames = ['อาทิตย์', 'จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์', 'เสาร์'];
+      return dayNames[date.getDay()];
+    }
+    
+    // ฟังก์ชันตรวจสอบว่าเป็นวันหยุดสุดสัปดาห์หรือไม่
+    function isWeekend(date) {
+      const day = date.getDay();
+      return day === 0 || day === 6; // 0 = วันอาทิตย์, 6 = วันเสาร์
+    }
+    
+    // ฟังก์ชันรีเซ็ตฟอร์ม
+    function resetForm() {
+      document.getElementById('employeeWorkForm').reset();
+      document.getElementById('employeeInfoSection').classList.add('hidden');
+      document.getElementById('worktimeSection').classList.add('hidden');
+      document.getElementById('workPatternSection').classList.add('hidden');
+      document.getElementById('dateSection').classList.add('hidden');
+      document.getElementById('datesDetailSection').classList.add('hidden');
+      
+      // ซ่อนข้อความแจ้งเตือนทั้งหมด
+      hideAllMessages();
+      
+      // รีเซ็ต work pattern selection
+      document.querySelectorAll('.work-pattern-option').forEach(function(option) {
+        option.classList.remove('work-pattern-selected');
+      });
+      
+      document.getElementById('datesContainer').innerHTML = '';
+      employeeData = null;
+      datesList = [];
+      
+      // ตั้งค่าวันที่ปัจจุบันเป็นค่าเริ่มต้นสำหรับช่องวันที่
+      const today = new Date();
+      const formattedDate = today.toISOString().split('T')[0];
+      document.getElementById('startDate').value = formattedDate;
+      
+      // เพิ่มวันที่อีก 14 วัน
+      const endDate = new Date(today);
+      endDate.setDate(today.getDate() + 14);
+      document.getElementById('endDate').value = endDate.toISOString().split('T')[0];
+      
+      // เลื่อนกลับไปด้านบนของฟอร์ม
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    
+    // ฟังก์ชันแสดงข้อความสำเร็จ
+    function showSuccess(message) {
+      const successMessage = document.getElementById('successMessage');
+      successMessage.innerHTML = message;
+      successMessage.classList.remove('hidden');
+      document.getElementById('errorMessage').classList.add('hidden');
+      document.getElementById('status').classList.add('hidden');
+    }
+    
+    // ฟังก์ชันแสดงข้อความผิดพลาด
+    function showError(message) {
+      const errorMessage = document.getElementById('errorMessage');
+      errorMessage.innerHTML = message;
+      errorMessage.classList.remove('hidden');
+      document.getElementById('successMessage').classList.add('hidden');
+      document.getElementById('status').classList.add('hidden');
+    }
+    
+    // ฟังก์ชันแสดงสถานะ
+    function showStatus(message) {
+      const statusMessage = document.getElementById('status');
+      statusMessage.innerHTML = message;
+      statusMessage.classList.remove('hidden');
+      document.getElementById('successMessage').classList.add('hidden');
+      document.getElementById('errorMessage').classList.add('hidden');
+    }
+    
+    // ฟังก์ชันซ่อนข้อความทั้งหมด
+    function hideAllMessages() {
+      document.getElementById('successMessage').classList.add('hidden');
+      document.getElementById('errorMessage').classList.add('hidden');
+      document.getElementById('status').classList.add('hidden');
+    }
+    
+    // Event listeners สำหรับ select
+    document.getElementById('worktime').addEventListener('change', function() {
+      const selectedOption = this.options[this.selectedIndex];
+      if (selectedOption.value) {
+        this.classList.add('selected-option');
+      } else {
+        this.classList.remove('selected-option');
+      }
+    });
+    
+    // โหลดตัวเลือกช่วงเวลาทำงานเมื่อหน้าเว็บโหลดเสร็จ
+    google.script.run
+      .withSuccessHandler(function(options) {
+        const worktimeSelect = document.getElementById('worktime');
+        options.forEach(function(option) {
+          const optionElement = document.createElement('option');
+          optionElement.value = option.id;
+          optionElement.textContent = option.name;
+          worktimeSelect.appendChild(optionElement);
+        });
+      })
+      .withFailureHandler(function(error) {
+        showError('<i class="fas fa-exclamation-circle"></i> เกิดข้อผิดพลาดในการโหลดข้อมูลช่วงเวลาทำงาน');
+      })
+      .getWorkTimeOptions();
+  </script>
+</body>
+</html>
