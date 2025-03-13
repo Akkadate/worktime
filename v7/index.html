@@ -87,9 +87,9 @@
       
       <!-- ข้อ 3: รูปแบบวันทำงาน -->
       <div class="form-group hidden" id="workPatternSection">
-        <label>3. รูปแบบวันทำงานแต่ละสัปดาห์:</label>
+        <label>3. รูปแบบวันทำงานแต่ละสัปดาห์: <span class="text-danger">*</span></label>
         <div class="form-check">
-          <input class="form-check-input" type="radio" name="workPattern" id="samePattern" value="same" checked>
+          <input class="form-check-input" type="radio" name="workPattern" id="samePattern" value="same" required>
           <label class="form-check-label" for="samePattern">วันทำงานเหมือนกันทุกสัปดาห์</label>
         </div>
         <div class="form-check">
@@ -103,11 +103,11 @@
         <label>4. ระยะเวลาทำงาน:</label>
         <div class="row">
           <div class="col-md-6">
-            <label for="startDate">วันที่เริ่มต้น:</label>
+            <label for="startDate">วันที่เริ่มต้น: <span class="text-danger">*</span></label>
             <input type="date" class="form-control" id="startDate" required>
           </div>
           <div class="col-md-6">
-            <label for="endDate">วันที่สิ้นสุด:</label>
+            <label for="endDate">วันที่สิ้นสุด: <span class="text-danger">*</span></label>
             <input type="date" class="form-control" id="endDate" required>
           </div>
         </div>
@@ -178,8 +178,9 @@
       const startDate = new Date(document.getElementById('startDate').value);
       const endDate = new Date(document.getElementById('endDate').value);
       const worktimeId = document.getElementById('worktime').value;
+      const workPattern = document.querySelector('input[name="workPattern"]:checked');
       
-      if (!startDate || !endDate || !worktimeId) {
+      if (!startDate || !endDate || !worktimeId || !workPattern) {
         showError('กรุณากรอกข้อมูลให้ครบถ้วน');
         return;
       }
@@ -191,8 +192,7 @@
       }
       
       // ตรวจสอบรูปแบบวันทำงานที่เลือก
-      const workPattern = document.querySelector('input[name="workPattern"]:checked').value;
-      const maxDaysToShow = (workPattern === 'same') ? 7 : 14; // 7 วันสำหรับรูปแบบเดียวกัน, 14 วันสำหรับรูปแบบสลับ
+      const maxDaysToShow = (workPattern.value === 'same') ? 7 : 14; // 7 วันสำหรับรูปแบบเดียวกัน, 14 วันสำหรับรูปแบบสลับ
       
       // ค้นหาวันจันทร์แรกที่ weeknum เป็นเลขคู่ ที่อยู่ในช่วงวันที่ผู้ใช้เลือก
       let displayStartDate = findEvenWeekMondayInRange(startDate, endDate);
@@ -219,7 +219,7 @@
           formattedDate: formatDate(currentDate),
           dayOfWeek: getDayOfWeek(currentDate),
           isWeekend: isWeekend(currentDate),
-          status: isWeekend(currentDate) ? 0 : 1
+          status: null // ไม่กำหนดค่าเริ่มต้น ผู้ใช้ต้องเลือกเอง
         };
         
         datesList.push(dateObj);
@@ -236,6 +236,7 @@
         }
         
         // สร้าง HTML สำหรับรายการวัน
+        const dateKey = dateObj.date.getTime();
         dateItem.innerHTML = `
           <div class="row align-items-center">
             <div class="col-md-6">
@@ -245,16 +246,14 @@
             </div>
             <div class="col-md-6">
               <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="dayStatus_${dateObj.date.getTime()}" 
-                  id="workday_${dateObj.date.getTime()}" value="1" 
-                  ${!dateObj.isWeekend ? 'checked' : ''}>
-                <label class="form-check-label" for="workday_${dateObj.date.getTime()}">วันทำงาน</label>
+                <input class="form-check-input day-status-radio" type="radio" name="dayStatus_${dateKey}" 
+                  id="workday_${dateKey}" value="1" required>
+                <label class="form-check-label" for="workday_${dateKey}">วันทำงาน</label>
               </div>
               <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="dayStatus_${dateObj.date.getTime()}" 
-                  id="holiday_${dateObj.date.getTime()}" value="0" 
-                  ${dateObj.isWeekend ? 'checked' : ''}>
-                <label class="form-check-label" for="holiday_${dateObj.date.getTime()}">วันหยุด</label>
+                <input class="form-check-input day-status-radio" type="radio" name="dayStatus_${dateKey}" 
+                  id="holiday_${dateKey}" value="0" required>
+                <label class="form-check-label" for="holiday_${dateKey}">วันหยุด</label>
               </div>
             </div>
           </div>
@@ -274,9 +273,9 @@
       }
       
       // เพิ่มข้อความแสดงช่วงวันที่และรูปแบบที่เลือก
-      let patternText = workPattern === 'same' ? 'วันทำงานเหมือนกันทุกสัปดาห์' : 'มีการสลับวันทำงานทุกสัปดาห์ (5.5 วัน)';
+      let patternText = workPattern.value === 'same' ? 'วันทำงานเหมือนกันทุกสัปดาห์' : 'มีการสลับวันทำงานทุกสัปดาห์ (5.5 วัน)';
       document.getElementById('datesDetailSection').querySelector('h4').textContent = 
-        `5. กำหนดสถานะในแต่ละวัน (${formatDate(displayStartDate)} - ${formatDate(new Date(currentDate.getTime() - 86400000))}, ${patternText}):`;
+        `5. กำหนดสถานะในแต่ละวัน: (${formatDate(displayStartDate)} - ${formatDate(new Date(currentDate.getTime() - 86400000))}, ${patternText})`;
       
       // แสดงส่วนรายละเอียดวัน
       document.getElementById('datesDetailSection').classList.remove('hidden');
@@ -288,6 +287,13 @@
       // ตรวจสอบข้อมูลที่จำเป็นทั้งหมด
       if (!document.getElementById('employeeId').value || !document.getElementById('worktime').value || datesList.length === 0) {
         showError('กรุณากรอกข้อมูลให้ครบถ้วน');
+        return;
+      }
+      
+      // ตรวจสอบว่าเลือกสถานะของทุกวันแล้ว
+      const allRadios = document.querySelectorAll('.day-status-radio:checked');
+      if (allRadios.length < datesList.length) {
+        showError('กรุณาเลือกสถานะ (วันทำงาน/วันหยุด) ให้ครบทุกวัน');
         return;
       }
       
@@ -312,6 +318,13 @@
       datesList.forEach(dateObj => {
         const timeKey = dateObj.date.getTime();
         const workdayRadio = document.getElementById(`workday_${timeKey}`);
+        const holidayRadio = document.getElementById(`holiday_${timeKey}`);
+        
+        // ตรวจสอบว่าเลือกสถานะหรือยัง
+        if (!workdayRadio.checked && !holidayRadio.checked) {
+          throw new Error(`ยังไม่ได้เลือกสถานะสำหรับวันที่ ${dateObj.formattedDate}`);
+        }
+        
         // ดึงค่าที่เลือก (1 = ทำงาน, 0 = วันหยุด)
         const status = workdayRadio.checked ? 1 : 0;
         
