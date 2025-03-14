@@ -40,7 +40,7 @@
     }
     
     .hidden {
-      display: none;
+      display: none !important;
     }
     
     .container {
@@ -334,6 +334,42 @@
       border-bottom: 1px solid #e2e8f0;
     }
     
+    /* สไตล์สำหรับ footer */
+    .footer {
+      text-align: center;
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid #e2e8f0;
+      font-size: 0.9rem;
+      color: #6b7280;
+      opacity: 0.9;
+      transition: opacity 0.3s ease;
+    }
+    
+    .footer:hover {
+      opacity: 1;
+    }
+    
+    .footer-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .footer-logo {
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+    
+    .footer-version {
+      font-size: 0.8rem;
+      background-color: #f3f4f6;
+      padding: 2px 8px;
+      border-radius: 12px;
+      margin-top: 5px;
+    }
+    
     /* ทำให้ responsive มากขึ้น */
     @media (max-width: 768px) {
       .container {
@@ -526,12 +562,25 @@
     <div class="alert alert-success hidden mt-3 fade-in" id="successMessage"></div>
     <div class="alert alert-danger hidden mt-3 fade-in" id="errorMessage"></div>
     <div class="alert alert-info hidden mt-3 fade-in" id="status"></div>
+    
+    <!-- ส่วน Footer ที่เพิ่มเข้ามา -->
+    <div class="footer">
+      <div class="footer-content">
+        <div class="footer-logo">
+          <i class="fas fa-laptop-code me-2"></i> สำนักเทคโนโลยีสารสนเทศ
+        </div>
+        <div class="footer-version">
+          <i class="fas fa-code-branch me-1"></i> เวอร์ชั่น 7
+        </div>
+      </div>
+    </div>
   </div>
   
   <script>
     // ตัวแปรสำหรับเก็บข้อมูล
     let employeeData = null;
     let datesList = [];
+    let messageTimeouts = {};
     
     // ตั้งค่าเริ่มต้นเมื่อโหลดหน้าเว็บ
     document.addEventListener('DOMContentLoaded', function() {
@@ -547,6 +596,9 @@
       
       // โหลดตัวเลือกช่วงเวลาทำงาน
       loadWorkTimeOptions();
+      
+      // ตรวจสอบว่ามีข้อความแสดงอยู่หรือไม่ และซ่อนทั้งหมด
+      hideAllMessages();
     });
     
     // ฟังก์ชันโหลดตัวเลือกช่วงเวลาทำงาน
@@ -555,6 +607,12 @@
       google.script.run
         .withSuccessHandler(function(options) {
           const worktimeSelect = document.getElementById('worktime');
+          
+          // เคลียร์ตัวเลือกเดิมก่อน (ป้องกันการเพิ่มซ้ำ)
+          while (worktimeSelect.options.length > 1) {
+            worktimeSelect.remove(1);
+          }
+          
           options.forEach(function(option) {
             const optionElement = document.createElement('option');
             optionElement.value = option.id;
@@ -586,7 +644,7 @@
       // เรียกใช้ฟังก์ชันใน Google Apps Script
       google.script.run
         .withSuccessHandler(function(result) {
-          // ซ่อนข้อความสถานะเมื่อแสดงข้อมูลสำเร็จ (เพิ่มตรงนี้เพื่อความแน่นอน)
+          // ซ่อนข้อความสถานะทันที
           hideAllMessages();
           
           if (result) {
@@ -973,6 +1031,11 @@
       endDate.setDate(today.getDate() + 14);
       document.getElementById('endDate').value = endDate.toISOString().split('T')[0];
       
+      // แสดง footer ให้เห็นได้ชัดเจนขึ้นหลังจากรีเซ็ตฟอร์ม
+      const footer = document.querySelector('.footer');
+      footer.style.opacity = '1';
+      setTimeout(() => { footer.style.opacity = '0.9'; }, 3000);
+      
       // เลื่อนกลับไปด้านบนของฟอร์ม
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -985,10 +1048,12 @@
       document.getElementById('errorMessage').classList.add('hidden');
       document.getElementById('status').classList.add('hidden');
       
+      // ล้าง timeout เดิมทั้งหมด
+      clearAllMessageTimeouts();
+      
       // ซ่อนข้อความหลังจากระยะเวลาที่กำหนด
       if (timeout > 0) {
-        clearTimeout(window.messageTimeout);
-        window.messageTimeout = setTimeout(function() {
+        messageTimeouts.success = setTimeout(function() {
           successMessage.classList.add('hidden');
         }, timeout);
       }
@@ -1002,37 +1067,55 @@
       document.getElementById('successMessage').classList.add('hidden');
       document.getElementById('status').classList.add('hidden');
       
+      // ล้าง timeout เดิมทั้งหมด
+      clearAllMessageTimeouts();
+      
       // ซ่อนข้อความหลังจากระยะเวลาที่กำหนด
       if (timeout > 0) {
-        clearTimeout(window.messageTimeout);
-        window.messageTimeout = setTimeout(function() {
+        messageTimeouts.error = setTimeout(function() {
           errorMessage.classList.add('hidden');
         }, timeout);
       }
     }
     
     // ฟังก์ชันแสดงสถานะ
-    function showStatus(message, timeout = 0) {
+    function showStatus(message, timeout = 5000) {
       const statusMessage = document.getElementById('status');
       statusMessage.innerHTML = message;
       statusMessage.classList.remove('hidden');
       document.getElementById('successMessage').classList.add('hidden');
       document.getElementById('errorMessage').classList.add('hidden');
       
+      // ล้าง timeout เดิมทั้งหมด
+      clearAllMessageTimeouts();
+      
       // ซ่อนข้อความหลังจากระยะเวลาที่กำหนด
       if (timeout > 0) {
-        clearTimeout(window.messageTimeout);
-        window.messageTimeout = setTimeout(function() {
+        messageTimeouts.status = setTimeout(function() {
           statusMessage.classList.add('hidden');
         }, timeout);
       }
     }
     
+    // ฟังก์ชันล้าง timeout ทั้งหมด
+    function clearAllMessageTimeouts() {
+      // ล้างทุก timeout ที่อาจกำลังทำงานอยู่
+      Object.values(messageTimeouts).forEach(timeout => {
+        if (timeout) {
+          clearTimeout(timeout);
+        }
+      });
+      
+      // รีเซ็ต object เก็บ timeout
+      messageTimeouts = {};
+    }
+    
     // ฟังก์ชันซ่อนข้อความทั้งหมด
     function hideAllMessages() {
-      // ล้าง timeout ที่อาจกำลังทำงานอยู่
-      clearTimeout(window.messageTimeout);
+      // ล้าง timeout ทั้งหมด
+      clearAllMessageTimeouts();
       
+      // ซ่อนข้อความทั้งหมด
       document.getElementById('successMessage').classList.add('hidden');
       document.getElementById('errorMessage').classList.add('hidden');
       document.getElementById('status').classList.add('hidden');
@@ -1048,21 +1131,8 @@
       }
     });
     
-    // โหลดตัวเลือกช่วงเวลาทำงานเมื่อหน้าเว็บโหลดเสร็จ
-    google.script.run
-      .withSuccessHandler(function(options) {
-        const worktimeSelect = document.getElementById('worktime');
-        options.forEach(function(option) {
-          const optionElement = document.createElement('option');
-          optionElement.value = option.id;
-          optionElement.textContent = option.name;
-          worktimeSelect.appendChild(optionElement);
-        });
-      })
-      .withFailureHandler(function(error) {
-        showError('<i class="fas fa-exclamation-circle"></i> เกิดข้อผิดพลาดในการโหลดข้อมูลช่วงเวลาทำงาน', 5000);
-      })
-      .getWorkTimeOptions();
+    // แสดงข้อมูลเวอร์ชัน
+    document.querySelector('.footer-version').innerHTML = '<i class="fas fa-code-branch me-1"></i> เวอร์ชั่น 7';
   </script>
 </body>
 </html>
