@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/png" href="https://img.icons8.com/connect-color/100/globe.png">
-  <title>แบบฟอร์มสำรวจเวลาทำงานของพนักงาน</title>
+  <title>แบบฟอร์มสำรวจเวลาทำงานของบุคลากร</title>
   
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -452,18 +452,18 @@
 
 <body>
   <div class="container">
-    <h2>แบบฟอร์มสำรวจเวลาทำงานของพนักงาน</h2>
+    <h2>แบบฟอร์มสำรวจตารางทำงานของบุคลากร</h2>
     
     <form id="employeeWorkForm">
       <!-- ข้อ 1: รหัสพนักงาน -->
       <div class="form-group">
         <div class="section-title">
           <div class="badge">1</div>
-          <div class="title-text">รหัสพนักงาน</div>
+          <div class="title-text">รหัสบุคลากร</div>
         </div>
-        <input type="text" class="form-control" id="employeeId" placeholder="กรุณาระบุรหัสพนักงาน เช่น E001">
+        <input type="text" class="form-control" id="employeeId" placeholder="กรุณาระบุรหัสบุคลากร">
         <button type="button" class="btn btn-primary mt-3 w-100" id="searchButton" onclick="searchEmployee()">
-          <i class="fas fa-search"></i> ค้นหาข้อมูลพนักงาน
+          <i class="fas fa-search"></i> ค้นหาข้อมูลบุคลากร
         </button>
       </div>
       
@@ -503,7 +503,7 @@
             <div class="form-check">
               <input class="form-check-input" type="radio" name="workPattern" id="samePattern" value="same" required>
               <label class="form-check-label" for="samePattern">
-                <i class="fas fa-calendar-check me-2"></i> วันทำงานเหมือนกันทุกสัปดาห์
+                <i class="fas fa-calendar-check me-2"></i> วันทำงานและวันหยุดเหมือนกันทุกสัปดาห์
               </label>
             </div>
           </div>
@@ -512,7 +512,7 @@
             <div class="form-check">
               <input class="form-check-input" type="radio" name="workPattern" id="alternatePattern" value="alternate">
               <label class="form-check-label" for="alternatePattern">
-                <i class="fas fa-calendar-alt me-2"></i> มีการสลับวันทำงานทุกสัปดาห์ (5.5 วัน)
+                <i class="fas fa-calendar-alt me-2"></i> มีการสลับวันทำงานและวันหยุด (เช่น บุคลากร 5.5 วัน)
               </label>
             </div>
           </div>
@@ -523,23 +523,23 @@
       <div class="form-group hidden fade-in" id="dateSection">
         <div class="section-title">
           <div class="badge">4</div>
-          <div class="title-text">ระยะเวลาทำงาน</div>
+          <div class="title-text">ระยะเวลากำหนดตารางทำงาน</div>
         </div>
         
         <div class="row">
           <div class="col-md-6 mb-3">
-            <label for="startDate">วันที่เริ่มต้น: <span class="text-danger">*</span></label>
+            <label for="startDate">วันที่เริ่มต้น: (เลือกเป็นวันจันทร์ที่เริ่มต้น) <span class="text-danger">*</span></label>
             <input type="date" class="form-control" id="startDate" required>
           </div>
           <div class="col-md-6 mb-3">
-            <label for="endDate">วันที่สิ้นสุด: <span class="text-danger">*</span></label>
+            <label for="endDate">วันที่สิ้นสุด: (เลือกวันสุดท้ายของตารางงาน) <span class="text-danger">*</span></label>
             <input type="date" class="form-control" id="endDate" required>
           </div>
         </div>
-        <small class="text-muted"><i class="fas fa-info-circle me-1"></i> หมายเหตุ: ระบบจะแสดงรายการวันสำหรับกำหนดสถานะตามรูปแบบวันทำงานที่เลือก</small>
+        <small class="text-muted"><i class="fas fa-info-circle me-1"></i> หมายเหตุ: ระบบจะแสดงวันแรกเป็นวันจันทร์ที่สัปดาห์ที่เป็นเลขคู่</small>
         <div class="mt-3">
           <button type="button" class="btn btn-info w-100" onclick="generateDatesList()">
-            <i class="fas fa-calendar-days"></i> แสดงรายการวันทำงาน
+            <i class="fas fa-calendar-days"></i> คลิกเพื่อระบุวันทำงาน/วันหยุด
           </button>
         </div>
       </div>
@@ -549,7 +549,7 @@
         <div class="date-separator"></div>
         <div class="section-title">
           <div class="badge">5</div>
-          <div class="title-text" id="datesDetailTitle">กำหนดสถานะในแต่ละวัน</div>
+          <div class="title-text" id="datesDetailTitle">กำหนดวันทำงาน/วันหยุดในสัปดาห์ **ระบบจะแสดงวันแรกเป็นวันจันทร์ที่สัปดาห์ที่เป็นเลขคู่</div>
         </div>
         <div id="datesContainer">
           <!-- รายการวันจะถูกสร้างโดย JavaScript -->
@@ -571,7 +571,7 @@
           <i class="fas fa-laptop-code me-2"></i> สำนักเทคโนโลยีสารสนเทศ
         </div>
         <div class="footer-version">
-          <i class="fas fa-code-branch me-1"></i> เวอร์ชั่น 7
+          <i class="fas fa-code-branch me-1"></i> เวอร์ชั่น 8
         </div>
       </div>
     </div>
@@ -832,7 +832,7 @@
       // เพิ่มข้อความแสดงช่วงวันที่และรูปแบบที่เลือก
       let patternText = workPattern.value === 'same' ? 'วันทำงานเหมือนกันทุกสัปดาห์' : 'มีการสลับวันทำงานทุกสัปดาห์ (5.5 วัน)';
       document.getElementById('datesDetailTitle').textContent = 
-        `กำหนดสถานะในแต่ละวัน: (${formatDate(displayStartDate)} - ${formatDate(new Date(currentDate.getTime() - 86400000))}, ${patternText})`;
+        `กำหนดสถานะในแต่ละวัน (ระบบแสดงวันจันทร์ที่สัปดาห์เป็นเลขคู่): (${formatDate(displayStartDate)} - ${formatDate(new Date(currentDate.getTime() - 86400000))}, ${patternText})`;
       
       // แสดงส่วนรายละเอียดวัน
       document.getElementById('datesDetailSection').classList.remove('hidden');
@@ -1133,7 +1133,7 @@
     });
     
     // แสดงข้อมูลเวอร์ชัน
-    document.querySelector('.footer-version').innerHTML = '<i class="fas fa-code-branch me-1"></i> เวอร์ชั่น 7';
+    document.querySelector('.footer-version').innerHTML = '<i class="fas fa-code-branch me-1"></i> เวอร์ชั่น 8';
   </script>
 </body>
 </html>
